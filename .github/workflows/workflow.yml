@@ -17,11 +17,13 @@ jobs:
       - name: Docker login
         uses: docker/login-action@v3
         with:
-          username: ${{ github.repository_owner }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
       - name: Build container and push
         uses: docker/build-push-action@v5
         with:
           context: .
           push: true
-          tags: jmma86/docker-test:latest
+          tags: |
+            jmma86/docker-test:latest
+            jmma86/docker-test:${{ github.sha }}
