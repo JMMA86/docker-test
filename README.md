@@ -1,11 +1,11 @@
 # Getting Started with Create React App
 
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
 ## Estudiante
 
 - **Nombre**: Juan Manuel Marín Angarita
 - **Código**: A00382037
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
 ## Available Scripts
 
@@ -73,3 +73,53 @@ This section has moved here: [https://facebook.github.io/create-react-app/docs/d
 ### `npm run build` fails to minify
 
 This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+
+### Workflow
+
+1. A `YAML` file was created to make the GitHub action:
+
+```
+name: Publish to Docker
+on:
+  push:
+    branches:
+      - main
+permissions:
+  packages: write
+  contents: read
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Docker login
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build container and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: |
+            jmma86/docker-test:latest
+            jmma86/docker-test:${{ github.sha }}
+```
+
+2. Secrets were configured creating access tokens from Docker account:
+
+![docker_tokens](images/image1.png)
+
+3. The variables were added to the repository settings:
+
+![github_tokens](images/image2.png)
+
+4. After some failed attempts and changes, tests passed:
+
+![workflow](images/image3.png)
+
+![tests](images/image4.png)
